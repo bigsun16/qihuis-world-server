@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: qihuis-world-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/wish_tree?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 10
+      max-wait: 10000
+mybatis-plus:
+#  type-aliases-package: com.qihui.sun.dao
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    map-underscore-to-camel-case: true
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+  level:
+    root: info
+    sql: debug
+  file:
+    name: wish_tree.log
