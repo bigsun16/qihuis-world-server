@@ -1,3 +1,7 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /qihuis-world
 spring:
   application:
     name: qihuis-world-server
