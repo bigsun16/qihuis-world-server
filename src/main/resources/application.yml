@@ -16,11 +16,12 @@ spring:
       min-idle: 5
       max-active: 10
       max-wait: 10000
+  elasticsearch:
+    uris:
+      - http://localhost:9200
 mybatis-plus:
-#  type-aliases-package: com.qihui.sun.dao
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-#    map-underscore-to-camel-case: true
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
@@ -29,3 +30,4 @@ logging:
     sql: debug
   file:
     name: wish_tree.log
+
