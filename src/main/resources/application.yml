@@ -7,7 +7,7 @@ spring:
     name: qihuis-world-server
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/wish_tree?useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/wish_tree?useSSL=false&serverTimezone=UTC&requireSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
