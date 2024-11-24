@@ -6,13 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
-import org.springframework.data.elasticsearch.core.query.SqlQuery;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @SpringBootTest
 class QihuisWorldApplicationTests {
@@ -28,7 +26,7 @@ class QihuisWorldApplicationTests {
         article.setTitle("深入理解java虚拟机");
         article.setContent("这是一本讲解javajvm的书籍");
         article.setCategoryKey("java");
-        article.setUpdateTime(LocalDate.now());
+        article.setUpdateTime(LocalDateTime.now());
         article.setCreateTime(null);
         articleService.save(article);
         articleService.findAll();

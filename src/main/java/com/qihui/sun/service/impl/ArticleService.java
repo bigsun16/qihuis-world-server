@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,8 +30,8 @@ public class ArticleService {
     }
 
     public void save(Article article) {
-        article.setCreateTime(LocalDate.now());
-        article.setUpdateTime(LocalDate.now());
+        article.setCreateTime(LocalDateTime.now());
+        article.setUpdateTime(LocalDateTime.now());
         article.setDeleteFlag(false);
         articleRepository.save(article);
     }
