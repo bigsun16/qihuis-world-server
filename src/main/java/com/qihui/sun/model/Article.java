@@ -1,6 +1,8 @@
 package com.qihui.sun.model;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -9,11 +11,21 @@ import java.time.LocalDateTime;
  */
 @Data
 public class Article {
-    private String id;
+    private Integer id;
     private String title;
     private String content;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField("create_time")
     private LocalDateTime createTime;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField("update_time")
     private LocalDateTime updateTime;
+
+    @TableField("category_key")
     private String categoryKey;
-    private Boolean deleteFlag;
+
+    @TableField("delete_flag")
+    private Integer deleteFlag;
 }

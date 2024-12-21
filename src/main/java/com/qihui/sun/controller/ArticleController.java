@@ -19,12 +19,12 @@ public class ArticleController {
 
     @GetMapping("/list")
     public JSONArray selectAllCategoryList(@RequestParam String categoryKey){
-        List<Article> categories = articleService.listByMap(Collections.singletonMap("categoryKey", categoryKey));
+        List<Article> categories = articleService.listByMap(Collections.singletonMap("category_key", categoryKey));
         return JSONArray.from(categories);
     }
     @PostMapping("/add")
     public void addArticle(@RequestBody Article article){
-        articleService.save(article);
+        articleService.saveArticle(article);
     }
 
 }
