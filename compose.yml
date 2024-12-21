@@ -13,6 +13,8 @@ services:  # 定义服务部分，包含所有要启动的服务
     volumes:  # 数据卷挂载
       - esdata:/usr/share/elasticsearch/data  # 将数据持久化到 Docker 主机上的卷中
       - esplugins:/usr/share/elasticsearch/plugins  # 将数据持久化到 Docker 主机上的卷中
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     ports:  # 端口映射，将主机端口映射到容器端口
       - "9200:9200"  # 映射 HTTP REST API 端口
       - "9300:9300"  # 映射节点间通信端口
@@ -30,6 +32,9 @@ services:  # 定义服务部分，包含所有要启动的服务
       - "5601:5601"  # 映射 Kibana 的 Web 界面端口
     depends_on:  # 依赖的服务列表
       - elasticsearch  # 表示 Kibana 依赖于 elasticsearch 服务
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:  # 容器连接的网络
       - wish_tree  # 自定义网络名称，用于服务间的通信
 
@@ -59,6 +64,8 @@ services:  # 定义服务部分，包含所有要启动的服务
       - /opt/qihuis/nginx/dist:/usr/share/nginx/html
       # 挂载静态图片目录 (images)
       - /opt/qihuis/nginx/images:/usr/share/nginx/images
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     ports:
       - "80:80"
     restart: unless-stopped
@@ -76,6 +83,9 @@ services:  # 定义服务部分，包含所有要启动的服务
     depends_on:
       - mysql
       - elasticsearch
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     networks:
       - wish_tree
       
