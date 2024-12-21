@@ -2,12 +2,15 @@ server:
   port: 8888
   servlet:
     context-path: /qihuis-world
+wish_tree_host:
+  mysql: 192.168.10.130
+  elasticsearch: 192.168.10.130
 spring:
   application:
     name: qihuis-world-server
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/wish_tree?useSSL=false&serverTimezone=UTC&requireSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${wish_tree_host.mysql}:3306/wish_tree?useSSL=false&serverTimezone=UTC&requireSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
@@ -18,7 +21,9 @@ spring:
       max-wait: 1000
   elasticsearch:
     uris:
-      - http://localhost:9200
+      - http://${wish_tree_host.elasticsearch}:9200
+    username: elastic
+    password: qihuis
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
