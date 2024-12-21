@@ -4,7 +4,6 @@ server:
     context-path: /qihuis-world
 wish_tree_host:
   mysql: 192.168.10.130
-  elasticsearch: 192.168.10.130
 spring:
   application:
     name: qihuis-world-server
@@ -19,11 +18,6 @@ spring:
       min-idle: 5
       max-active: 10
       max-wait: 1000
-  elasticsearch:
-    uris:
-      - http://${wish_tree_host.elasticsearch}:9200
-    username: elastic
-    password: qihuis
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

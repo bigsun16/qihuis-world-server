@@ -8,7 +8,7 @@ WORKDIR /app
 COPY qihuis-world-server-*.jar app.jar
 
 # 声明环境变量
-ENV JAVA_OPTS="-Dwish_tree_host.mysql=mysql -Dwish_tree_host.elasticsearch=elasticsearch"
+ENV JAVA_OPTS=""
 
 # 设置容器启动命令
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]
