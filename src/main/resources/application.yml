@@ -3,7 +3,7 @@ server:
   servlet:
     context-path: /qihuis-world
 wish_tree_host:
-  mysql: 192.168.10.130
+  mysql: localhost
 spring:
   application:
     name: qihuis-world-server

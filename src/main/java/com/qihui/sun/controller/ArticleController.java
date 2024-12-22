@@ -23,8 +23,12 @@ public class ArticleController {
         return JSONArray.from(categories);
     }
     @PostMapping("/add")
-    public void addArticle(@RequestBody Article article){
-        articleService.saveArticle(article);
+    public boolean addArticle(@RequestBody Article article){
+        return articleService.saveArticle(article);
     }
 
+    @DeleteMapping("/{id}")
+    public boolean deleteArticle(@PathVariable Integer id){
+        return articleService.removeById(id);
+    }
 }
