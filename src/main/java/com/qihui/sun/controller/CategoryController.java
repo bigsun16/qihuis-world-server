@@ -1,9 +1,8 @@
 package com.qihui.sun.controller;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.qihui.sun.model.Category;
+import com.qihui.sun.controller.response.ApiResponse;
+import com.qihui.sun.domain.Category;
 import com.qihui.sun.service.CategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,17 +16,17 @@ import java.util.List;
 public class CategoryController {
 
 
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    @Autowired
-    public void setCategoryService(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
+
     @GetMapping("/list")
-    public JSONArray selectAllCategoryList(){
+    public ApiResponse<List<Category>> selectAllCategoryList() {
         List<Category> list = categoryService.list();
-        return JSONArray.from(list);
+        return ApiResponse.success(list);
     }
 
 }

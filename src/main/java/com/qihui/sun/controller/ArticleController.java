@@ -1,9 +1,12 @@
 package com.qihui.sun.controller;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.qihui.sun.model.Article;
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.annotation.SaIgnore;
+import com.qihui.sun.controller.response.ApiResponse;
+import com.qihui.sun.domain.Article;
+import com.qihui.sun.permission.StpRoleImpl;
 import com.qihui.sun.service.ArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -12,19 +15,32 @@ import java.util.List;
 @RestController
 @RequestMapping("/article")
 @CrossOrigin
+@SaCheckLogin
+@SaCheckRole(StpRoleImpl.NORMAL)
 public class ArticleController {
-    @Autowired
-    private ArticleService articleService;
+    private final ArticleService articleService;
+
+    public ArticleController(ArticleService articleService) {
+        this.articleService = articleService;
+    }
 
 
+    @SaIgnore
     @GetMapping("/list")
-    public JSONArray selectAllCategoryList(@RequestParam String categoryKey){
-        List<Article> categories = articleService.listByMap(Collections.singletonMap("category_key", categoryKey));
-        return JSONArray.from(categories);
-    }
-    @PostMapping("/add")
-    public void addArticle(@RequestBody Article article){
-        articleService.saveArticle(article);
+    public ApiResponse<List<Article>> selectAllArticleList(@RequestParam String categoryKey) {
+        List<Article> categoryList = articleService.listByMap(Collections.singletonMap("category_key", categoryKey));
+        return ApiResponse.success(categoryList);
     }
 
+    @PostMapping("/addOrUpdate")
+    public ApiResponse<Boolean> addArticle(@RequestBody Article article) {
+        boolean b = articleService.saveArticle(article);
+        return ApiResponse.success(b);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Boolean> deleteArticle(@PathVariable Integer id) {
+        boolean b = articleService.removeById(id);
+        return ApiResponse.success(b);
+    }
 }
