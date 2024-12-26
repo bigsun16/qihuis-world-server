@@ -6,6 +6,7 @@ import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qihui.sun.domain.Users;
+import com.qihui.sun.permission.RateLimit;
 import com.qihui.sun.service.UserRoleService;
 import com.qihui.sun.service.UsersService;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class LoginController {
     }
 
 
+    @RateLimit(permitsPerSecond = 10)
     @PostMapping("/login")
     public SaResult doLogin(@RequestBody Users user) {
         logger.info("用户登录：" + user);
@@ -54,8 +56,8 @@ public class LoginController {
     }
 
     @GetMapping("/isLogin")
-    public boolean isLogin() {
-        return StpUtil.isLogin();
+    public SaResult isLogin() {
+         return SaResult.data(StpUtil.isLogin());
     }
 
     public Users doRegister(Users user) {

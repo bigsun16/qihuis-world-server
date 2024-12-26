@@ -18,6 +18,9 @@ spring:
       min-idle: 5
       max-active: 10
       max-wait: 1000
+  cache:
+    type: caffeine
+    caffeine.spec: initialCapacity=100,maximumSize=1000,expireAfterWrite=30m
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
