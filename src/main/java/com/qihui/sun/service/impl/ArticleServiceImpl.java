@@ -44,6 +44,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
             return save(article);
         }
     }
+
+    public boolean deleteById(Integer id) {
+        Article byId = getById(id);
+        if (id != null && byId != null) {
+            //如果是管理员或者本人则可以更新文章
+            if (byId.getUserId().equals(StpUtil.getLoginId()) || StpUtil.hasRole(StpRoleImpl.ADMINISTRATOR)) {
+                logger.info("updating existing article");
+                return update().set("delete_flag", 1).eq("id", id).update();
+            } else {
+                StpUtil.checkRole(StpRoleImpl.ADMINISTRATOR);
+                return false;
+            }
+        } else {
+            throw new RuntimeException("id not found");
+        }
+    }
 }
 
 

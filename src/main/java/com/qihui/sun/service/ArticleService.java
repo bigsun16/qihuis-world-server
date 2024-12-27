@@ -10,4 +10,5 @@ import com.qihui.sun.domain.Article;
  */
 public interface ArticleService extends IService<Article> {
     boolean saveArticle(Article article);
+    boolean deleteById(Integer id);
 }

@@ -1,5 +1,7 @@
 package com.qihui.sun.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
@@ -17,7 +19,7 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin
+@SaCheckLogin
 public class LoginController {
 
     Logger logger = Logger.getLogger(LoginController.class.getName());
@@ -30,8 +32,9 @@ public class LoginController {
     }
 
 
-    @RateLimit(permitsPerSecond = 10)
+    @RateLimit(permitsPerSecond = 100)
     @PostMapping("/login")
+    @SaIgnore
     public SaResult doLogin(@RequestBody Users user) {
         logger.info("用户登录：" + user);
         String password = SaSecureUtil.sha256(user.getPassword());
@@ -57,7 +60,7 @@ public class LoginController {
 
     @GetMapping("/isLogin")
     public SaResult isLogin() {
-         return SaResult.data(StpUtil.isLogin());
+        return SaResult.data(StpUtil.isLogin());
     }
 
     public Users doRegister(Users user) {

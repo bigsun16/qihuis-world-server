@@ -25,9 +25,8 @@ public class RateLimitInterceptor  implements HandlerInterceptor {
                         new SimpleRateLimiter((int) rateLimit.permitsPerSecond(), 1, TimeUnit.SECONDS)
                 );
                 if (!rateLimiter.tryAcquire()) {
-                    response.setStatus(429); // 429 Too Many Requests
-                    response.getWriter().write("Too Many Requests");
-                    return false;
+                    response.setStatus(200);
+                    throw new RuntimeException("Too Many Requests, please try again later.");
                 }
             }
         }
