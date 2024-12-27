@@ -1,6 +1,5 @@
 package com.qihui.sun.controller;
 
-import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.StpUtil;
@@ -19,7 +18,6 @@ import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/user")
-@SaCheckLogin
 public class LoginController {
 
     Logger logger = Logger.getLogger(LoginController.class.getName());
