@@ -9,6 +9,7 @@ import com.qihui.sun.service.ArticleService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -28,7 +29,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         Article byId = getById(id);
         if (id != null && byId != null) {
             //如果是管理员或者本人则可以更新文章
-            if (byId.getUserId().equals(article.getUserId()) || StpUtil.hasRole(StpRoleImpl.ADMINISTRATOR)) {
+            if (Objects.equals(byId.getUserId(), article.getUserId()) || StpUtil.hasRole(StpRoleImpl.ADMINISTRATOR)) {
                 logger.info("updating existing article");
                 article.setUpdateTime(now);
                 return updateById(article);
@@ -46,10 +47,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
     }
 
     public boolean deleteById(Integer id) {
+        if (id == null) {
+            throw new RuntimeException("id not found");
+        }
         Article byId = getById(id);
-        if (id != null && byId != null) {
+        if (byId != null) {
             //如果是管理员或者本人则可以更新文章
-            if (byId.getUserId().equals(StpUtil.getLoginId()) || StpUtil.hasRole(StpRoleImpl.ADMINISTRATOR)) {
+            if (String.valueOf(byId.getUserId()).equals(String.valueOf(StpUtil.getLoginId())) || StpUtil.hasRole(StpRoleImpl.ADMINISTRATOR)) {
                 logger.info("updating existing article");
                 return update().set("delete_flag", 1).eq("id", id).update();
             } else {
