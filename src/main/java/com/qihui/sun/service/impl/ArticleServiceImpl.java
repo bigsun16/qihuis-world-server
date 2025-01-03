@@ -6,11 +6,12 @@ import com.qihui.sun.domain.Article;
 import com.qihui.sun.mapper.ArticleMapper;
 import com.qihui.sun.permission.StpRoleImpl;
 import com.qihui.sun.service.ArticleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  * @author bigsu
@@ -20,10 +21,13 @@ import java.util.logging.Logger;
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         implements ArticleService {
-    Logger logger = Logger.getLogger(ArticleServiceImpl.class.getName());
+    Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
 
     @Override
     public boolean saveArticle(Article article) {
+        if (article == null) {
+            throw new RuntimeException("article is null");
+        }
         Integer id = article.getId();
         LocalDateTime now = LocalDateTime.now();
         Article byId = getById(id);

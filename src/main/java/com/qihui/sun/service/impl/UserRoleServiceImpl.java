@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
         implements UserRoleService {
-//    private final Logger log = Logger.getLogger(UserRoleServiceImpl.class.getName());
 //    private final RoleService roleService;
 
 //    public UserRoleServiceImpl(RoleService roleService) {

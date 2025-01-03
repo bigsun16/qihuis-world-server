@@ -5,10 +5,9 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # 将当前目录的内容复制到容器的工作目录中
-COPY qihuis-world-server-*.jar app.jar
+COPY ./target/qihuis-world.jar app.jar
 
 # 声明环境变量
 ENV JAVA_OPTS=""
-
 # 设置容器启动命令
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar app.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar app.jar" ]

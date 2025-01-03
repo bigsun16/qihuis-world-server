@@ -1,5 +1,7 @@
 package com.qihui.sun.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class Role implements Serializable {
+    @TableId(value = "role_id", type = IdType.AUTO)
     private Integer roleId;
 
     private String roleName;

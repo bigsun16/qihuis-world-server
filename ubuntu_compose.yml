@@ -1,0 +1,59 @@
+version: '3.8'  # 指定使用的 Docker Compose 文件版本
+#free -m要查看 buff/cache 的占用情况;sync && echo 1 > /proc/sys/vm/drop_caches清理页面缓存,这将强制系统将所有脏页（未写入磁盘的已修改页面）写入磁盘并清空页面缓存。
+services:  # 定义服务部分，包含所有要启动的服务
+  mysql:
+    image: mysql:8.0.31
+    restart: always
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3306:3306'
+    volumes:
+      - /opt/qihuis/mysql/mysql-conf:/etc/mysql/conf.d
+      - mysql-data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    networks:  # 容器连接的网络
+      - wish_tree 
+  nginx:
+    image: nginx
+    container_name: nginx
+    volumes:
+      - /opt/qihuis/nginx/ubuntu_nginx.conf:/etc/nginx/nginx.conf
+      - /opt/qihuis/wish_tree/upload:/opt/qihuis/wish_tree/upload
+      - /opt/qihuis/nginx/dist:/usr/share/nginx/html
+      - /opt/qihuis/nginx/images:/usr/share/nginx/images
+      - /opt/qihuis/nginx/ssl:/etc/nginx/ssl
+      - /opt/qihuis/nginx/logs:/nginx/logs
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    networks:  # 容器连接的网络
+      - wish_tree
+  qihuis-world:
+    build: .
+    container_name: qihuis-world
+    restart: always
+    environment:
+      - wish_tree_host.mysql=mysql
+    ports:
+      - "8888:8888"
+    depends_on:
+      - mysql
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /opt/qihuis/server/logs:/app/logs
+      - /opt/qihuis/wish_tree/upload:/opt/qihuis/wish_tree/upload
+    networks:
+      - wish_tree
+      
+volumes:  # 定义数据卷
+  mysql-data:
+networks:  # 定义自定义网络
+  wish_tree:  # 创建一个名为 elastic 的自定义网络，以便服务之间可以相互通信
+  

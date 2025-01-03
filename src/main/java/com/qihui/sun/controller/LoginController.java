@@ -10,17 +10,18 @@ import com.qihui.sun.domain.Users;
 import com.qihui.sun.permission.RateLimit;
 import com.qihui.sun.service.UserRoleService;
 import com.qihui.sun.service.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/user")
 public class LoginController {
 
-    Logger logger = Logger.getLogger(LoginController.class.getName());
+    Logger logger = LoggerFactory.getLogger(LoginController.class);
     private final UsersService usersService;
     private final UserRoleService userRoleService;
 
