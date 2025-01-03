@@ -3,8 +3,8 @@ server:
   servlet:
     context-path: /qihuis-world
   tomcat:
-    connection-timeout: 1800000
-    keep-alive-timeout: 1800000
+    connection-timeout: 60000
+    keep-alive-timeout: 60000
 wish_tree_host:
   mysql: localhost
 spring:
@@ -33,7 +33,7 @@ spring:
     time-zone: GMT+8
   mvc:
     async:
-      request-timeout: 1800000
+      request-timeout: 60000 # 异步请求超时时间 毫秒 默认30s
 logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
