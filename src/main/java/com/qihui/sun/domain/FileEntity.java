@@ -30,6 +30,7 @@ public class FileEntity implements Serializable {
     private String type;
     private String alt;
     private String url;
+    private String realPath;
     private FileUploadStatusEnum status;
     private LocalDateTime create_time;
     private LocalDateTime update_time;
@@ -53,6 +54,7 @@ public class FileEntity implements Serializable {
                 && this.getSha256().equals(other.getSha256())
                 && this.getSize().equals(other.getSize())
                 && this.getType().equals(other.getType())
+                && this.getRealPath().equals(other.getRealPath())
                 && this.getTotalChunks().equals(other.getTotalChunks())
                 && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
                 && (this.getUrl() == null ? other.getUrl() == null : this.getUrl().equals(other.getUrl()))
@@ -70,6 +72,7 @@ public class FileEntity implements Serializable {
         result = prime * result + getSha256().hashCode();
         result = prime * result + getSize().hashCode();
         result = prime * result + getType().hashCode();
+        result = prime * result + getRealPath().hashCode();
         result = prime * result + getTotalChunks().hashCode();
         result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
         result = prime * result + ((getCreate_time() == null) ? 0 : getCreate_time().hashCode());
@@ -92,6 +95,7 @@ public class FileEntity implements Serializable {
                 ", type=" + type +
                 ", alt=" + alt +
                 ", url=" + url +
+                ", realPath=" + realPath +
                 ", totalChunks=" + totalChunks +
                 ", create_time=" + create_time +
                 ", update_time=" + update_time +

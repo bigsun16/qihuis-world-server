@@ -5,14 +5,19 @@ server:
   tomcat:
     connection-timeout: 60000
     keep-alive-timeout: 60000
-wish_tree_host:
-  mysql: localhost
+wish_tree:
+  mysql:
+    server: localhost
+  file:
+    upload:
+      path: /opt/qihuis/wish_tree/upload
+      serverUrl: https://www.sunqihui.me/upload
 spring:
   application:
     name: qihuis-world-server
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${wish_tree_host.mysql}:3306/wish_tree?useSSL=false&serverTimezone=UTC&requireSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${wish_tree.mysql.server}:3306/wish_tree?useSSL=false&serverTimezone=UTC&requireSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource

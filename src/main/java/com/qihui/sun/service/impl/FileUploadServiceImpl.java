@@ -66,13 +66,15 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private FileEntity initFileAndGet(MultipartFile file, String sha256, String alt) {
         String fileId = UUID.randomUUID().toString();
-        String filename = fileId + FileUploadUtil.getFileExtension(file.getOriginalFilename());
-        filename = FileUploadUtil.getBaseDir().resolve(filename).toString();
+        String filename = fileId + "." + FileUploadUtil.getFileExtension(file.getOriginalFilename());
+        String timePath = FileUploadUtil.getTimePath();
+        String fileRealPath = FileUploadUtil.getBaseDir(timePath).resolve(filename).toString();
         FileEntity fileEntity = FileEntity.builder()
                 .status(FileUploadStatusEnum.UPLOADING)
                 .id(fileId)
                 .filename(filename)
-                .url(FileUploadUtil.serverUrl + filename)
+                .realPath(fileRealPath)
+                .url(FileUploadUtil.getFileUrl(timePath, filename))
                 .sha256(sha256)
                 .size(file.getSize())
                 .type(Objects.requireNonNull(file.getContentType()))
@@ -87,7 +89,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private FileUploadRes tryUploadFile(MultipartFile file, FileEntity fileEntity) {
         try {
-            FileUploadUtil.createAndWriteFile(file, Path.of(fileEntity.getFilename()));
+            FileUploadUtil.createAndWriteFile(file, Path.of(fileEntity.getRealPath()));
             updateFileUploadStatus(fileEntity, FileUploadStatusEnum.SUCCESS);
             return buildFileUploadRes(fileEntity);
         } catch (IOException e) {
@@ -130,12 +132,14 @@ public class FileUploadServiceImpl implements FileUploadService {
 
     private FileUploadRes initFileAndChunkInfoAndReturnFileId(FileEntity fileEntity) {
         String fileId = UUID.randomUUID().toString();
-        String filename = fileId + FileUploadUtil.getFileExtension(fileEntity.getFilename());
-        filename = FileUploadUtil.getBaseDir().resolve(filename).toString();
-        fileEntity.setFilename(filename);
+        String filename = fileId + "." + FileUploadUtil.getFileExtension(fileEntity.getFilename());
+        String timePath = FileUploadUtil.getTimePath();
+        String filePath = FileUploadUtil.getBaseDir(timePath).resolve(filename).toString();
         fileEntity.setStatus(FileUploadStatusEnum.UPLOADING);
         fileEntity.setId(fileId);
-        fileEntity.setUrl(FileUploadUtil.serverUrl + filename);
+        fileEntity.setFilename(filename);
+        fileEntity.setRealPath(filePath);
+        fileEntity.setUrl(FileUploadUtil.getFileUrl(timePath, filename));
         fileEntity.setCreate_time(LocalDateTime.now());
         fileEntity.setUpdate_time(LocalDateTime.now());
         fileEntityService.save(fileEntity);
@@ -215,7 +219,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                 }
                 FileUploadUtil.checkTempFileHashIsSame(fileEntity.getSha256(), tempFilePath);
                 FileUploadUtil.checkFileExtensionAndType(fileEntity.getFilename(), tempFilePath);
-                Files.move(tempFilePath, Path.of(fileEntity.getFilename()), StandardCopyOption.ATOMIC_MOVE);
+                Files.move(tempFilePath, Path.of(fileEntity.getRealPath()), StandardCopyOption.ATOMIC_MOVE);
                 // 更新文件状态为完成
                 updateFileUploadStatus(fileEntity, FileUploadStatusEnum.SUCCESS);
                 return buildFileUploadRes(fileEntity);
@@ -234,6 +238,14 @@ public class FileUploadServiceImpl implements FileUploadService {
         } catch (RuntimeException e) {
             updateFileUploadStatus(fileEntity, FileUploadStatusEnum.FAILURE);
             throw e;
+        } finally {
+            if (tempFilePath != null && Files.exists(tempFilePath)) {
+                try {
+                    Files.deleteIfExists(tempFilePath);
+                } catch (IOException e) {
+                    logger.error("Failed to delete temporary file.", e);
+                }
+            }
         }
     }
 
@@ -247,17 +259,16 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     // 定时清理无关联的文章的图片
-    // 每日零点执行一次
     @Scheduled(cron = "0 0 0 * * ?")
     public void cleanNoLinkedFiles() {
         fileEntityService.query()
-                .select("filename")
+                .select("url")
                 .list()
                 .forEach(fileEntity -> WishTreeThreadPool.getExecutor().execute(() -> {
-                    boolean exists = articleService.exists(new QueryWrapper<Article>().like("content", fileEntity.getFilename()));
+                    boolean exists = articleService.exists(new QueryWrapper<Article>().like("content", fileEntity.getUrl()));
                     if (!exists) {
                         try {
-                            FileUploadUtil.deleteFile(fileEntity.getFilename());
+                            Files.deleteIfExists(Path.of(fileEntity.getRealPath()));
                         } catch (IOException e) {
                             logger.error("Failed to delete file: {}", fileEntity.getFilename());
                         }

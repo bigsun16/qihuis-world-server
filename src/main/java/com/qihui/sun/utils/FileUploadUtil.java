@@ -4,6 +4,9 @@ import cn.hutool.crypto.digest.DigestUtil;
 import com.qihui.sun.domain.FileType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -16,20 +19,46 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Component
 public class FileUploadUtil {
-    private static final String path = "/opt/qihuis/wish_tree/upload";
-    public static final String serverUrl = "https://www.sunqihui.me/upload";
-    //    public static final String serverUrl = "https://192.168.10.128/upload";
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(FileUploadUtil.class);
+
+    private static String path;
+    public static String serverUrl;
     private static final Tika tika = new Tika();
 
-    public static Path getBaseDir() {
+    @Value("${wish_tree.file.upload.path}")
+    public void setPath(String path) {
+        logger.info("文件上传路径：{}", path);
+        FileUploadUtil.path = path;
+    }
+
+    @Value("${wish_tree.file.upload.serverUrl}")
+    public void setServerUrl(String serverUrl) {
+        logger.info("文件上传服务器地址：{}", serverUrl);
+        FileUploadUtil.serverUrl = serverUrl;
+    }
+
+    public static String getFileUrl(String timePath, String fileName) {
+        logger.info("timePath:{}, fileName:{}", timePath, fileName);
+        return Path.of(serverUrl).resolve(timePath).resolve(fileName).toString();
+    }
+
+    public static String getTimePath() {
         LocalDate now = LocalDate.now();
-        return Paths.get(path)
-                .resolve(now.getYear() + "/" + now.getMonthValue() + "/" + now.getDayOfMonth());
+        String year = String.valueOf(now.getYear());
+        String month = String.valueOf(now.getMonthValue());
+        String day = String.valueOf(now.getDayOfMonth());
+        return Paths.get(year, month, day).toString();
+    }
+
+    public static Path getBaseDir(String timePath) {
+        logger.info("path:{},timePath:{}", path, timePath);
+        return Paths.get(path, timePath);
     }
 
     public static Path getChunkDir(String fileId) {
-        return getBaseDir().resolve("chunks").resolve(fileId);
+        return Paths.get(path, "chunks", fileId);
     }
 
     public static Path getTempDir(String fileId) {
@@ -46,14 +75,6 @@ public class FileUploadUtil {
 
     public static String getFileExtension(String filename) {
         return FilenameUtils.getExtension(filename);
-        /*if (filename == null || filename.isEmpty()) {
-            return "";
-        }
-        int lastDotIndex = filename.lastIndexOf('.');
-        if (lastDotIndex == -1 || lastDotIndex == filename.length() - 1) {
-            return "";
-        }
-        return filename.substring(lastDotIndex);*/
     }
 
     public static void checkFileExtensionAndType(MultipartFile file) {
@@ -126,7 +147,4 @@ public class FileUploadUtil {
 
     }
 
-    public static void deleteFile(String filePath) throws IOException {
-        Files.deleteIfExists(Path.of(filePath));
-    }
 }
