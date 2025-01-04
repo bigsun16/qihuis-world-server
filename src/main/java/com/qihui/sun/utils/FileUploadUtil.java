@@ -17,7 +17,7 @@ import java.util.Objects;
 
 public class FileUploadUtil {
     private static final String path = "/opt/qihuis/wish_tree/upload";
-    public static final String serverUrl = "https://8.155.9.156/upload";
+    public static final String serverUrl = "https://www.sunqihui.me/upload";
 //    public static final String serverUrl = "https://192.168.10.128/upload";
 
     public static Path getBaseDir() {

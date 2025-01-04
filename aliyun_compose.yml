@@ -3,7 +3,7 @@ version: '3.8'  # 指定使用的 Docker Compose 文件版本
 services:  # 定义服务部分，包含所有要启动的服务
   mysql:
     image: mysql:8.0.31
-    restart: always
+    restart: unless-stopped
     container_name: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=123456
@@ -20,24 +20,24 @@ services:  # 定义服务部分，包含所有要启动的服务
     image: nginx
     container_name: nginx
     volumes:
+      - /etc/letsencrypt:/etc/nginx/ssl
       - /opt/qihuis/nginx/aliyun_nginx.conf:/etc/nginx/nginx.conf
       - /opt/qihuis/wish_tree/upload:/opt/qihuis/wish_tree/upload
       - /opt/qihuis/nginx/dist:/usr/share/nginx/html
       - /opt/qihuis/nginx/images:/usr/share/nginx/images
-      - /opt/qihuis/nginx/ssl:/etc/nginx/ssl
       - /opt/qihuis/nginx/logs:/nginx/logs
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     ports:
       - "80:80"
       - "443:443"
-    restart: always
+    restart: unless-stopped
     networks:  # 容器连接的网络
       - wish_tree
   qihuis-world:
     build: .
     container_name: qihuis-world
-    restart: always
+    restart: unless-stopped
     environment:
       - wish_tree_host.mysql=mysql
     ports:
