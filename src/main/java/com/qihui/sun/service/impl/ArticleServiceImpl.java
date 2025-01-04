@@ -58,7 +58,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         if (byId != null) {
             //如果是管理员或者本人则可以更新文章
             if (String.valueOf(byId.getUserId()).equals(String.valueOf(StpUtil.getLoginId())) || StpUtil.hasRole(StpRoleImpl.ADMINISTRATOR)) {
-                logger.info("updating existing article");
+                logger.info("delete existing article");
                 return update().set("delete_flag", 1).eq("id", id).update();
             } else {
                 StpUtil.checkRole(StpRoleImpl.ADMINISTRATOR);
