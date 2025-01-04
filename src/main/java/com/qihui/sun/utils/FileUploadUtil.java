@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +19,8 @@ import java.util.Objects;
 public class FileUploadUtil {
     private static final String path = "/opt/qihuis/wish_tree/upload";
     public static final String serverUrl = "https://www.sunqihui.me/upload";
-//    public static final String serverUrl = "https://192.168.10.128/upload";
+    //    public static final String serverUrl = "https://192.168.10.128/upload";
+    private static final Tika tika = new Tika();
 
     public static Path getBaseDir() {
         LocalDate now = LocalDate.now();
@@ -65,7 +67,7 @@ public class FileUploadUtil {
 
     public static void checkFileExtensionAndType(String filename, MultipartFile file, Path filePath) {
         String fileExtension = getFileExtension(filename);
-        Tika tika = new Tika();
+
         try {
             String mimeType;
             if (file != null) {
@@ -87,12 +89,15 @@ public class FileUploadUtil {
     }
 
     public static String SHA256(MultipartFile file) throws IOException {
-        byte[] bytes = file.getBytes();
-        return DigestUtil.sha256Hex(bytes);
+        try (InputStream inputStream = file.getInputStream()) {
+            return DigestUtil.sha256Hex(inputStream);
+        }
     }
 
-    public static String SHA256(File file) {
-        return DigestUtil.sha256Hex(file);
+    public static String SHA256(File file) throws IOException {
+        try (InputStream inputStream = Files.newInputStream(file.toPath())) {
+            return DigestUtil.sha256Hex(inputStream);
+        }
     }
 
     public static void checkFileHashIsSame(String fileHash, MultipartFile file) {
@@ -114,8 +119,11 @@ public class FileUploadUtil {
 
 
     public static void createAndWriteFile(MultipartFile file, Path filePath) throws IOException {
-        Files.createDirectories(filePath);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        Files.createDirectories(filePath.getParent());
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+
     }
 
     public static void deleteFile(String filePath) throws IOException {
