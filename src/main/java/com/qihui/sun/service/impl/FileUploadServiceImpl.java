@@ -93,6 +93,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             updateFileUploadStatus(fileEntity, FileUploadStatusEnum.SUCCESS);
             return buildFileUploadRes(fileEntity);
         } catch (IOException e) {
+            logger.error("Failed to upload file: ", e);
             updateFileUploadStatus(fileEntity, FileUploadStatusEnum.FAILURE);
             throw new RuntimeException("Failed to upload file.");
         }
@@ -194,6 +195,7 @@ public class FileUploadServiceImpl implements FileUploadService {
             FileUploadUtil.createAndWriteFile(file, filePath);
             updateChunkFileUploadStatus(one, FileUploadStatusEnum.SUCCESS);
         } catch (IOException e) {
+            logger.error("Failed to upload ChunkFile: ", e);
             updateChunkFileUploadStatus(one, FileUploadStatusEnum.FAILURE);
             throw new RuntimeException("Failed to upload file.");
         }
@@ -218,7 +220,7 @@ public class FileUploadServiceImpl implements FileUploadService {
                     Files.deleteIfExists(chunkPath);
                 }
                 FileUploadUtil.checkTempFileHashIsSame(fileEntity.getSha256(), tempFilePath);
-                FileUploadUtil.checkFileExtensionAndType(fileEntity.getFilename(), tempFilePath);
+                FileUploadUtil.checkFileExtensionAndType(tempFilePath);
                 Files.move(tempFilePath, Path.of(fileEntity.getRealPath()), StandardCopyOption.ATOMIC_MOVE);
                 // 更新文件状态为完成
                 updateFileUploadStatus(fileEntity, FileUploadStatusEnum.SUCCESS);

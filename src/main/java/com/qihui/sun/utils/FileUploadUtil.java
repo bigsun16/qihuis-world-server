@@ -17,7 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.Arrays;
 
 @Component
 public class FileUploadUtil {
@@ -41,7 +41,10 @@ public class FileUploadUtil {
 
     public static String getFileUrl(String timePath, String fileName) {
         logger.info("timePath:{}, fileName:{}", timePath, fileName);
-        return Path.of(serverUrl).resolve(timePath).resolve(fileName).toString();
+        String path = Paths.get(timePath, fileName).toString();
+        String fileUrl = serverUrl + "/" + path;
+        logger.info("fileUrl:{}", fileUrl);
+        return fileUrl;
     }
 
     public static String getTimePath() {
@@ -78,17 +81,14 @@ public class FileUploadUtil {
     }
 
     public static void checkFileExtensionAndType(MultipartFile file) {
-        String upperCase = Objects.requireNonNull(file.getOriginalFilename()).toUpperCase();
-        checkFileExtensionAndType(upperCase, file, null);
+        checkFileExtensionAndType(file, null);
     }
 
-    public static void checkFileExtensionAndType(String filename, Path filePath) {
-        checkFileExtensionAndType(filename, null, filePath);
+    public static void checkFileExtensionAndType(Path filePath) {
+        checkFileExtensionAndType(null, filePath);
     }
 
-    public static void checkFileExtensionAndType(String filename, MultipartFile file, Path filePath) {
-        String fileExtension = getFileExtension(filename);
-
+    public static void checkFileExtensionAndType(MultipartFile file, Path filePath) {
         try {
             String mimeType;
             if (file != null) {
@@ -96,10 +96,13 @@ public class FileUploadUtil {
             } else if (filePath != null) {
                 mimeType = tika.detect(filePath);
             } else {
-                throw new RuntimeException("文件类型不匹配");
+                throw new RuntimeException("文件不存在");
             }
-            FileType fileType = FileType.valueOf(fileExtension);
-            if (!fileType.getContentType().equals(mimeType)) {
+            String[] picContentType = FileType.PICTURE.getContentType();
+            String[] videoContentType = FileType.VIDEO.getContentType();
+            boolean b1 = Arrays.stream(picContentType).anyMatch(mimeType::equalsIgnoreCase);
+            boolean b2 = Arrays.stream(videoContentType).anyMatch(mimeType::equalsIgnoreCase);
+            if (!b1 && !b2) {
                 throw new RuntimeException("文件类型不匹配");
             }
         } catch (IOException e) {

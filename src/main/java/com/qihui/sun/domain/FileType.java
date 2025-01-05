@@ -4,14 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum FileType {
-    JPG("image/jpeg"),
-    PNG("image/png"),
-    JPEG("image/jpeg"),
-    MP4("video/mp4");
+    PICTURE("image/jpeg", "image/jpeg", "image/jpeg"),
+    VIDEO("video/mp4", "video/quicktime", "video/x-msvideo,video/avi,video/x-flv");
 
-    private final String contentType;
+    private final String[] contentType;
 
-    FileType(String contentType) {
+    FileType(String... contentType) {
         this.contentType = contentType;
     }
 
