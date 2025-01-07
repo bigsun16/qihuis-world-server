@@ -24,10 +24,7 @@ public class ArticleController {
     @PostMapping("/list")
     @RateLimit(permitsPerSecond = 100)
     public ApiResponse<Page<Article>> selectAllArticleList(@RequestBody PageReq pageReq) {
-        Page<Article> pageRes = articleService.query()
-                .eq("category_key", pageReq.getParamValue())
-                .eq("delete_flag", 0)
-                .page(new Page<>(pageReq.getCurrent(), pageReq.getSize()));
+        Page<Article> pageRes = articleService.pageQuery(pageReq);
         return ApiResponse.success(pageRes);
     }
 

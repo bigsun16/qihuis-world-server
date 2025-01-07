@@ -1,8 +1,11 @@
 package com.qihui.sun.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qihui.sun.domain.Article;
+import com.qihui.sun.domain.PageReq;
 import com.qihui.sun.mapper.ArticleMapper;
 import com.qihui.sun.permission.StpRoleImpl;
 import com.qihui.sun.service.ArticleService;
@@ -67,6 +70,25 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         } else {
             throw new RuntimeException("id not found");
         }
+    }
+
+    @Override
+    public Page<Article> pageQuery(PageReq pageReq) {
+        QueryChainWrapper<Article> queryChainWrapper = this.query()
+                .eq("category_key", pageReq.getParamValue())
+                .eq("delete_flag", 0);
+        int currentLoginUserId = StpUtil.getLoginIdAsInt();
+        switch (pageReq.getSelectType()) {
+            case ALL:
+                break;
+            case MINE:
+                queryChainWrapper.eq("user_id", currentLoginUserId);
+                break;
+            case OTHERS:
+                queryChainWrapper.ne("user_id", currentLoginUserId);
+                break;
+        }
+        return queryChainWrapper.page(new Page<>(pageReq.getCurrent(), pageReq.getSize()));
     }
 }
 
