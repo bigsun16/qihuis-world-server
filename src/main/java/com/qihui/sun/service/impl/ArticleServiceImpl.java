@@ -77,15 +77,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article>
         QueryChainWrapper<Article> queryChainWrapper = this.query()
                 .eq("category_key", pageReq.getParamValue())
                 .eq("delete_flag", 0);
-        int currentLoginUserId = StpUtil.getLoginIdAsInt();
         switch (pageReq.getSelectType()) {
             case ALL:
                 break;
             case MINE:
-                queryChainWrapper.eq("user_id", currentLoginUserId);
+                queryChainWrapper.eq("user_id", StpUtil.getLoginIdAsInt());
                 break;
             case OTHERS:
-                queryChainWrapper.ne("user_id", currentLoginUserId);
+                queryChainWrapper.ne("user_id", StpUtil.getLoginIdAsInt());
                 break;
         }
         return queryChainWrapper.page(new Page<>(pageReq.getCurrent(), pageReq.getSize()));
