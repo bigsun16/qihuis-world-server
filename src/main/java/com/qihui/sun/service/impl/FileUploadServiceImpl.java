@@ -11,7 +11,6 @@ import com.qihui.sun.service.FileUploadService;
 import com.qihui.sun.utils.FileUploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -261,7 +260,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     }
 
     // 定时清理无关联的文章的图片
-    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(cron = "0 0 0 * * ?")
     public void cleanNoLinkedFiles() {
         fileEntityService.query()
                 .select("url")
