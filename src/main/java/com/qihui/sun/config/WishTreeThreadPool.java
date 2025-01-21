@@ -1,30 +1,17 @@
 package com.qihui.sun.config;
 
-import lombok.Getter;
-
 import java.util.concurrent.*;
 
 public class WishTreeThreadPool {
-    @Getter
-    private static final ExecutorService executor;
-
-    static {
+    public static ExecutorService getExecutor() {
         int corePoolSize = Runtime.getRuntime().availableProcessors(); // 获取CPU核心数
         int maximumPoolSize = corePoolSize + 1; // 最大线程数略大于核心数
-        long keepAliveTime = 60L;
-        TimeUnit unit = TimeUnit.SECONDS;
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(1000);
-//        ThreadFactory threadFactory = r -> Thread.ofVirtual().name("virtual-thread-", 0).unstarted(r);//如果是cpu密集型任务会比较糟糕
-        ThreadFactory threadFactory = Thread::new;
+        return new ThreadPoolExecutor(corePoolSize, maximumPoolSize, 60L, TimeUnit.SECONDS, workQueue, new ThreadPoolExecutor.AbortPolicy());
+    }
 
-        executor = new ThreadPoolExecutor(
-                corePoolSize,
-                maximumPoolSize,
-                keepAliveTime,
-                unit,
-                workQueue,
-                threadFactory,
-                new ThreadPoolExecutor.AbortPolicy()
-        );
+    public static ExecutorService getVirtualExecutor() {
+        //经测试cpu密集型任务使用效果比较糟糕
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }
