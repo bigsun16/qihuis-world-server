@@ -8,6 +8,6 @@ WORKDIR /app
 COPY ./target/qihuis-world.jar app.jar
 
 # 声明环境变量
-ENV JAVA_OPTS="-Xms512m -Xmx512m -XX:+UnlockExperimentalVMOptions -XX:+UseZGC"
+ENV JAVA_OPTS=""
 # 设置容器启动命令
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -jar app.jar" ]
